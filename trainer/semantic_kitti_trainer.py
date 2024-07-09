@@ -116,12 +116,12 @@ class SemanticKITTITrainer(pl.LightningModule):
         self.evaluator.addLoss(batch_loss)
 
         if self.train_step % self.iter_log == 0 or not is_train:
-            if is_train:
-                #self.write_summary(
-                #    'training/learning_rate',
-                #    self.scheduler.get_lr()[0],
-                #    self.train_step,
-                #)
+            #if is_train:
+            #    self.write_summary(
+            #        'training/learning_rate',
+            #        self.scheduler.get_lr()[0],
+            #        self.train_step,
+            #    )
 
             # loss
             self.write_summary(
