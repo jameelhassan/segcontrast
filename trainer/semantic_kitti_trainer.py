@@ -60,7 +60,7 @@ class SemanticKITTITrainer(pl.LightningModule):
         batch_acc = (correct * 100.)
 
         self.downstream_iter_callback(loss.item(), batch_acc, pred, y, x.C, True)
-        self.scheduler.step()
+        #self.scheduler.step()
 
         return {'loss': loss, 'acc': batch_acc}
 
@@ -117,11 +117,11 @@ class SemanticKITTITrainer(pl.LightningModule):
 
         if self.train_step % self.iter_log == 0 or not is_train:
             if is_train:
-                self.write_summary(
-                    'training/learning_rate',
-                    self.scheduler.get_lr()[0],
-                    self.train_step,
-                )
+                #self.write_summary(
+                #    'training/learning_rate',
+                #    self.scheduler.get_lr()[0],
+                #    self.train_step,
+                #)
 
             # loss
             self.write_summary(
@@ -244,7 +244,7 @@ class SemanticKITTITrainer(pl.LightningModule):
             'epoch': self.current_epoch,
             'optimizer': self.optimizer.state_dict(),
             'val_loss': self.best_loss,
-            'scheduler': self.scheduler.state_dict(),
+            #'scheduler': self.scheduler.state_dict(),
             'params': self.params,
             'train_step': self.train_step,
             'val_step': self.val_step,
@@ -258,7 +258,7 @@ class SemanticKITTITrainer(pl.LightningModule):
             'epoch': self.current_epoch,
             'optimizer': self.optimizer.state_dict(),
             'val_loss': self.best_loss,
-            'scheduler': self.scheduler.state_dict(),
+            #'scheduler': self.scheduler.state_dict(),
             'params': self.params,
             'train_step': self.train_step,
             'val_step': self.val_step,
