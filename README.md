@@ -20,6 +20,12 @@ Installing MinkowskiEngine with CUDA support:
 
 **Note:** We have released a new representation learning method based on temporal associations ([TARL](https://github.com/PRBonn/TARL)) that achieves better performance than SegContrast. Besides, we have added a new branch `tarl/fine-tuning` to this repo with the hyperparameters used in the fine-tuning experiments reported in the TARL paper.
 
+```
+conda activate TARL
+CUDA_VISIBLE_DEVICES=3 python3 downstream_train.py --use-cuda --use-intensity --checkpoint tarl --contrastive --load-checkpoint --ckpt-name DINO_10ep_model_t --batch-size 2 --sparse-model MinkUNet --epochs 40 --percentage-labels 0.1
+CUDA_VISIBLE_DEVICES=3 python3 inference_vis.py --dataset-name SemanticKITTI --log-dir ./checkpoint/downstream_task/TARL/ --data-dir ./Datasets/SemanticKITTI/ --sparse-model MinkUNet --sparse-resolution 0.05 --batch-size 1 --checkpoint tarl --use-cuda --best epoch39 --use-intensity
+```
+
 # SegContrast with Docker
 
 Inside the `docker/` directory there is a `Dockerfile` to build an image to run SegContrast. You can build the image from scratch or download the image from docker hub by:

@@ -1,0 +1,6 @@
+*.pt
+/lightning_logs
+__pycache__
+/runs
+/Datasets
+/checkpoint

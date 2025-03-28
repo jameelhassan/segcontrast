@@ -88,6 +88,17 @@ def run_inference(model, args):
     print(f'\nModel Acc.: {model_acc}\tModel mIoU: {model_miou}\n\n- Per Class mIoU:')
     for class_ in range(model_class_iou.shape[0]):
         print(f'\t{labels[class_]}: {model_class_iou[class_].item()}')
+    
+    output_file = f'{args.log_dir}/validation_metrics.txt'
+
+    with open(output_file, "w") as f:
+        f.write(f'Model Acc.: {model_acc}\n')
+        f.write(f'Model mIoU: {model_miou}\n\n- Per Class mIoU:\n')
+        
+        for class_ in range(model_class_iou.shape[0]):
+            f.write(f'\t{labels[class_]}: {model_class_iou[class_].item()}\n')
+
+    print(f"Validation metrics saved to {output_file}")
 
 
 
@@ -161,5 +172,7 @@ if __name__ == "__main__":
        import sys
        sys.exit()
     
+    resnet = resnet.to(device)
+    classifier = classifier.to(device)
     model = {'model': resnet, 'classifier': classifier}
     run_inference(model, args)

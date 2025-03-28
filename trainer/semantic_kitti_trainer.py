@@ -1,5 +1,4 @@
 import pytorch_lightning as pl
-from pytorch_lightning.metrics.functional.classification import iou
 from torch.utils.tensorboard import SummaryWriter
 import torch
 from data_utils.data_map import labels, content, color_map
@@ -7,6 +6,8 @@ from data_utils.ioueval import iouEval
 from data_utils.collations import *
 from numpy import inf, pi, cos, array, expand_dims
 from functools import partial
+from pdb import set_trace as stx
+import os
 
 class SemanticKITTITrainer(pl.LightningModule):
     def __init__(self, model, model_head, criterion, train_loader, val_loader, params):
@@ -24,9 +25,10 @@ class SemanticKITTITrainer(pl.LightningModule):
         self.evaluator = iouEval(n_classes=len(content.keys()), ignore=0)
         self.val_step = 0
         self.train_step = 0
+        self.ckpt_name = params.ckpt_name
 
         if self.params.load_checkpoint:
-            self.load_checkpoint()
+            self.load_checkpoint(self.ckpt_name)
 
     ############################################################################################################################################
     # FORWARD                                                                                                                                 #
@@ -211,12 +213,12 @@ class SemanticKITTITrainer(pl.LightningModule):
     # CHECKPOINT HANDLERS                                                                                                                      #
     ############################################################################################################################################
 
-    def load_checkpoint(self):
+    def load_checkpoint(self, ckpt_name='lastepoch199_model_segment_contrast'):
         self.configure_optimizers()
 
         if self.params.contrastive:
             # load model, best loss and optimizer
-            file_name = f'{self.params.log_dir}/../contrastive/lastepoch199_model_segment_contrast.pt'
+            file_name = f'{self.params.log_dir}/../contrastive/{ckpt_name}.pt'
             checkpoint = torch.load(file_name, map_location='cuda:0')
             self.model.load_state_dict(checkpoint['model'])
             print(f'Contrastive {file_name} loaded from epoch {checkpoint["epoch"]}')
@@ -249,7 +251,10 @@ class SemanticKITTITrainer(pl.LightningModule):
             'train_step': self.train_step,
             'val_step': self.val_step,
         }
-        file_name = f'{self.params.log_dir}/{checkpoint_id}_model_{self.params.checkpoint}.pt'
+        percentage_labels = str(self.params.percentage_labels * 100)
+        os.makedirs(f'{self.params.log_dir}/percent_{percentage_labels}/{self.ckpt_name}', exist_ok=True)
+        
+        file_name = f'{self.params.log_dir}/percent_{percentage_labels}/{self.ckpt_name}/{checkpoint_id}_model_{self.params.checkpoint}.pt'
 
         torch.save(state, file_name)
 
@@ -263,7 +268,7 @@ class SemanticKITTITrainer(pl.LightningModule):
             'train_step': self.train_step,
             'val_step': self.val_step,
         }
-        file_name = f'{self.params.log_dir}/{checkpoint_id}_model_head_{self.params.checkpoint}.pt'
+        file_name = f'{self.params.log_dir}/percent_{percentage_labels}/{self.ckpt_name}/{checkpoint_id}_model_head_{self.params.checkpoint}.pt'
 
         torch.save(state, file_name)
 

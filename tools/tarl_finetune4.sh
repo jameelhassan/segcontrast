@@ -1,0 +1,7 @@
+echo "TARL DINO_means50ep_BS4_LR4_t3-5_epoch=09_loss=1.42_model_t"
+
+CUDA_VISIBLE_DEVICES=4 python3 downstream_train.py --use-cuda --use-intensity --checkpoint tarl --contrastive --load-checkpoint --ckpt-name DINO_means50ep_BS4_LR4_t3-5_epoch=09_loss=1.42_model_t --batch-size 2 --sparse-model MinkUNet --epochs 40 --percentage-labels 0.1 & wait;\
+CUDA_VISIBLE_DEVICES=4 python3 downstream_train.py --use-cuda --use-intensity --checkpoint tarl --contrastive --load-checkpoint --ckpt-name DINO_means50ep_BS4_LR4_t3-5_epoch=09_loss=1.42_model_t --batch-size 2 --sparse-model MinkUNet --epochs 20 --percentage-labels 0.5 & wait;\
+CUDA_VISIBLE_DEVICES=4 python3 downstream_train.py --use-cuda --use-intensity --checkpoint tarl --contrastive --load-checkpoint --ckpt-name DINO_means50ep_BS4_LR4_t3-5_epoch=09_loss=1.42_model_t --batch-size 2 --sparse-model MinkUNet --epochs 15 --percentage-labels 1.0 & wait;\
+CUDA_VISIBLE_DEVICES=4 python3 downstream_train.py --use-cuda --use-intensity --checkpoint tarl --contrastive --load-checkpoint --ckpt-name DINO_means50ep_BS4_LR4_t3-5_epoch=09_loss=1.42_model_t --batch-size 2 --sparse-model MinkUNet --epochs 120 --percentage-labels 0.01 & wait;\
+CUDA_VISIBLE_DEVICES=4 python3 downstream_train.py --use-cuda --use-intensity --checkpoint tarl --contrastive --load-checkpoint --ckpt-name DINO_means50ep_BS4_LR4_t3-5_epoch=09_loss=1.42_model_t --batch-size 2 --sparse-model MinkUNet --epochs 300 --percentage-labels 0.001 & wait;\
