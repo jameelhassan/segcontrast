@@ -47,7 +47,7 @@ if __name__ == "__main__":
                         help='Fine-tune or linear evaluation (default: False')
     parser.add_argument('--load-checkpoint', action='store_true', default=False,
                         help='load checkpoint (default: True')
-    parser.add_argument('--ckpt-name', type=str, default='lastepoch199_model_segment_contrast',
+    parser.add_argument('--ckpt-name', type=str, default='lastepoch199_model_tarl',
                         help='name of the checkpoint file. See default')
     parser.add_argument('--use-intensity', action='store_true', default=False,
                         help='use points intensity (default: False')

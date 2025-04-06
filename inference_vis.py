@@ -166,7 +166,7 @@ if __name__ == "__main__":
        checkpoint = torch.load(f'{args.log_dir}/{classifier_filename}')
        classifier.load_state_dict(checkpoint['model'])
 
-       print(f'Loading model: {args.checkpoint}, from epoch: {epoch}')
+       print(f'Loading ckpt: {args.log_dir}/{model_filename}, of model: {args.checkpoint} from epoch: {epoch}')
     else:
        print('Trained model not found!')
        import sys
