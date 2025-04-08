@@ -7,6 +7,7 @@ import argparse
 from numpy import inf
 from losses.downstream_criterion import *
 import MinkowskiEngine as ME
+import os
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='SparseSimCLR')
@@ -65,6 +66,12 @@ if __name__ == "__main__":
     else:
         dtype = torch.FloatTensor
         device = torch.device("cpu")
+
+    # Set log directory
+    if args.linear_eval:
+        args.log_dir = 'checkpoint/linear_eval'
+        os.makedirs(args.log_dir, exist_ok=True)
+    print(f'Log directory: {args.log_dir}')
 
     set_deterministic()
 

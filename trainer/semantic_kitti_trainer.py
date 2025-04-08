@@ -241,6 +241,9 @@ class SemanticKITTITrainer(pl.LightningModule):
     def save_checkpoint(self, checkpoint_id):
         # save the best loss checkpoint
         print(f'Writing model checkpoint for {checkpoint_id}')
+        percentage_labels = str(self.params.percentage_labels * 100)
+        save_dir = f'{self.params.log_dir}/bs{self.params.batch_size}_percent_{percentage_labels}'
+
         state = {
             'model': self.model.state_dict(),
             'epoch': self.current_epoch,
@@ -251,10 +254,9 @@ class SemanticKITTITrainer(pl.LightningModule):
             'train_step': self.train_step,
             'val_step': self.val_step,
         }
-        percentage_labels = str(self.params.percentage_labels * 100)
-        os.makedirs(f'{self.params.log_dir}/bs{self.params.batch_size}_percent_{percentage_labels}/{self.ckpt_name}', exist_ok=True)
+        os.makedirs(f'{save_dir}/{self.ckpt_name}', exist_ok=True)
         
-        file_name = f'{self.params.log_dir}/bs{self.params.batch_size}_percent_{percentage_labels}/{self.ckpt_name}/{checkpoint_id}_model_{self.params.checkpoint}.pt'
+        file_name = f'{save_dir}/{self.ckpt_name}/{checkpoint_id}_model_{self.params.checkpoint}.pt'
 
         torch.save(state, file_name)
 
@@ -268,7 +270,7 @@ class SemanticKITTITrainer(pl.LightningModule):
             'train_step': self.train_step,
             'val_step': self.val_step,
         }
-        file_name = f'{self.params.log_dir}/bs{self.params.batch_size}_percent_{percentage_labels}/{self.ckpt_name}/{checkpoint_id}_model_head_{self.params.checkpoint}.pt'
+        file_name = f'{save_dir}/{self.ckpt_name}/{checkpoint_id}_model_head_{self.params.checkpoint}.pt'
 
         torch.save(state, file_name)
 
