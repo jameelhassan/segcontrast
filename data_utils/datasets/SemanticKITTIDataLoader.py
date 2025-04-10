@@ -12,10 +12,11 @@ import json
 warnings.filterwarnings('ignore')
 
 class SemanticKITTIDataLoader(Dataset):
-    def __init__(self, root,  split='train', pre_training=True, resolution=0.05, percentage=None, intensity_channel=False):
+    def __init__(self, root,  split='train', pre_training=True, pca=False, resolution=0.05, percentage=None, intensity_channel=False):
         self.root = root
         self.augmented_dir = 'augmented_views'
         self.n_clusters = 50
+        self.pca = pca
 
         if not os.path.isdir(os.path.join(self.root, self.augmented_dir)):
             os.makedirs(os.path.join(self.root, self.augmented_dir))
@@ -25,6 +26,7 @@ class SemanticKITTIDataLoader(Dataset):
         self.seq_ids = {}
         self.seq_ids['train'] = [ '00', '01', '02', '03', '04', '05', '06', '07', '09', '10' ]
         self.seq_ids['validation'] = ['08']
+        self.seq_ids['test'] = ['11', '12', '13', '14', '15', '16', '17', '18', '19']
         self.pre_training = pre_training
         self.split = split
 
@@ -138,6 +140,7 @@ class SemanticKITTIDataLoader(Dataset):
         return points_i, points_j
 
     def _get_item(self, index):
+        d_path = self.points_datapath[index]
         points_set = np.fromfile(self.points_datapath[index], dtype=np.float32)
         points_set = points_set.reshape((-1, 4))
 
@@ -153,13 +156,14 @@ class SemanticKITTIDataLoader(Dataset):
         # remove unlabeled points
         labels = np.delete(labels, unlabeled, axis=0)
         points_set = np.delete(points_set, unlabeled, axis=0)
-        points_set[:, :3] = self.transforms(points_set[:, :3])
+        if not self.pca:
+            points_set[:, :3] = self.transforms(points_set[:, :3])
 
         if not self.intensity_channel:
             points_set = points_set[:, :3]
 
         # now the point set return [x,y,z,i] always
-        return points_set, labels.astype(np.int32)
+        return points_set, labels.astype(np.int32), d_path
 
     def __getitem__(self, index):
         return self._get_augmented_item(index) if self.pre_training else self._get_item(index)

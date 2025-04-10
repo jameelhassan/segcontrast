@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "inference_pca.py",
+            "console": "integratedTerminal",
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0",
+            },
+            "args": [
+                "--dataset-name", "SemanticKITTI",
+                "--log-dir", "checkpoint/downstream_task/percent_100.0/TARL",
+                "--data-dir", "./Datasets/SemanticKITTI/", 
+                "--sparse-model", "MinkUNet", 
+                "--sparse-resolution", "0.05", 
+                "--batch-size", "1", 
+                "--checkpoint", "tarl", 
+                "--use-cuda", "--use-intensity", 
+                "--best", "epoch14"
+        ]
+        }
+    ]
+}

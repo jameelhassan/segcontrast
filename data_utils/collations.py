@@ -142,7 +142,7 @@ class SparseCollation:
         self.num_points = num_points
 
     def __call__(self, list_data):
-        points_set, labels = list(zip(*list_data))
+        points_set, labels, d_path = list(zip(*list_data))
 
         points_set = np.asarray(points_set)
         labels = np.asarray(labels)
@@ -166,4 +166,4 @@ class SparseCollation:
         # we first create TensorFields and from it we create the sparse tensors, so we can map the coordinate
         # features across different SparseTensors, i.e. output prediction and target labels
 
-        return p_coord, p_feats, p_label
+        return p_coord, p_feats, p_label, d_path
