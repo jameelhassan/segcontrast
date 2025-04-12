@@ -239,6 +239,28 @@ class SemanticKITTITrainer(pl.LightningModule):
             self.model_head.load_state_dict(checkpoint['model'])
 
     def save_checkpoint(self, checkpoint_id):
+        def get_unique_checkpoint_path(save_dir, ckpt_name, checkpoint_id, component, checkpoint_tag):
+            base_dir = os.path.join(save_dir, ckpt_name)
+            os.makedirs(base_dir, exist_ok=True)
+
+            if component == 'head':
+                base_name = f"{checkpoint_id}_model_{component}_{checkpoint_tag}.pt"
+            else:
+                base_name = f"{checkpoint_id}_model_{checkpoint_tag}.pt"
+            file_path = os.path.join(base_dir, base_name)
+
+            if os.path.exists(file_path):
+                i = 2
+                while True:
+                    new_name = f"{i}_{base_name}"
+                    new_path = os.path.join(base_dir, new_name)
+                    if not os.path.exists(new_path):
+                        file_path = new_path
+                        break
+                    i += 1
+
+            return file_path
+        
         # save the best loss checkpoint
         print(f'Writing model checkpoint for {checkpoint_id}')
         percentage_labels = str(self.params.percentage_labels * 100)
@@ -254,11 +276,10 @@ class SemanticKITTITrainer(pl.LightningModule):
             'train_step': self.train_step,
             'val_step': self.val_step,
         }
-        os.makedirs(f'{save_dir}/{self.ckpt_name}', exist_ok=True)
-        
-        file_name = f'{save_dir}/{self.ckpt_name}/{checkpoint_id}_model_{self.params.checkpoint}.pt'
+        file_name_head = get_unique_checkpoint_path(save_dir, self.ckpt_name, checkpoint_id, 'head', self.params.checkpoint)
+        file_name_backbone = get_unique_checkpoint_path(save_dir, self.ckpt_name, checkpoint_id, 'backbone', self.params.checkpoint)
 
-        torch.save(state, file_name)
+        torch.save(state, file_name_backbone)
 
         state = {
             'model': self.model_head.state_dict(),
@@ -270,9 +291,8 @@ class SemanticKITTITrainer(pl.LightningModule):
             'train_step': self.train_step,
             'val_step': self.val_step,
         }
-        file_name = f'{save_dir}/{self.ckpt_name}/{checkpoint_id}_model_head_{self.params.checkpoint}.pt'
 
-        torch.save(state, file_name)
+        torch.save(state, file_name_head)
 
     ############################################################################################################################################
 
