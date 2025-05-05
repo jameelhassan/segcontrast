@@ -5,3 +5,4 @@ __pycache__
 /Datasets
 /checkpoint
 /checkpoints
+/tools/*.json

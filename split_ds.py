@@ -56,42 +56,11 @@ if __name__ == "__main__":
                         help='use contrastive pre-trained weights (default: False')
     parser.add_argument('--accum-steps', type=int, default=1,
                         help='Number steps to accumulate gradient')
+    parser.add_argument('--split-data', action='store_true', default=False,
+                        help='Split data into train and validation sets (default: False)')
     parser.add_argument('--seed', type=int, default=0,)
 
     args = parser.parse_args()
 
-    if args.use_cuda:
-        dtype = torch.cuda.FloatTensor
-        device = torch.device("cuda")
-        print('GPU')
-    else:
-        dtype = torch.FloatTensor
-        device = torch.device("cpu")
-
-    # Set log directory
-    if args.linear_eval:
-        args.log_dir = 'checkpoint/linear_eval'
-        os.makedirs(args.log_dir, exist_ok=True)
-    print(f'Log directory: {args.log_dir}')
-
     set_deterministic()
-
     data_train, data_test = get_dataset(args, pre_training=False)
-    train_loader, test_loader = get_data_loader(data_train, data_test, args, pre_training=False)
-    criterion = torch.nn.CrossEntropyLoss(ignore_index=0)
-
-    model = get_model(args, dtype)
-    model_head = get_classifier_head(args, dtype)
-
-    if torch.cuda.device_count() > 1:
-        model = ME.MinkowskiSyncBatchNorm.convert_sync_batchnorm(model)
-        model_head = ME.MinkowskiSyncBatchNorm.convert_sync_batchnorm(model_head)
-
-        model_sem_kitti = SemanticKITTITrainer(model, model_head, criterion, train_loader, test_loader, args)
-        trainer = Trainer(gpus=-1, accelerator='ddp', check_val_every_n_epoch=args.epochs, max_epochs=args.epochs, accumulate_grad_batches=args.accum_steps)
-        trainer.fit(model_sem_kitti)
-
-    else:
-        model_sem_kitti = SemanticKITTITrainer(model, model_head, criterion, train_loader, test_loader, args)
-        trainer = Trainer(gpus=[0], check_val_every_n_epoch=args.epochs, max_epochs=args.epochs, accumulate_grad_batches=args.accum_steps)
-        trainer.fit(model_sem_kitti)

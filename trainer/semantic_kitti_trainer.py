@@ -242,7 +242,7 @@ class SemanticKITTITrainer(pl.LightningModule):
         # save the best loss checkpoint
         print(f'Writing model checkpoint for {checkpoint_id}')
         percentage_labels = str(self.params.percentage_labels * 100)
-        save_dir = f'{self.params.log_dir}/bs{self.params.batch_size}_percent_{percentage_labels}'
+        save_dir = f'{self.params.log_dir}/seed{self.params.seed}_percent_{percentage_labels}'
 
         state = {
             'model': self.model.state_dict(),

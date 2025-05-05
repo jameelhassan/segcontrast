@@ -12,7 +12,7 @@ import json
 warnings.filterwarnings('ignore')
 
 class SemanticKITTIDataLoader(Dataset):
-    def __init__(self, root,  split='train', pre_training=True, resolution=0.05, percentage=None, intensity_channel=False):
+    def __init__(self, root,  split='train', pre_training=True, resolution=0.05, percentage=None, intensity_channel=False, seed=0):
         self.root = root
         self.augmented_dir = 'augmented_views'
         self.n_clusters = 50
@@ -33,17 +33,21 @@ class SemanticKITTIDataLoader(Dataset):
         self.datapath_list(split)
 
         if split == 'train':
-            self.train_set_percent(percentage)
+            self.train_set_percent(percentage, seed=seed)
 
         print('The size of %s data is %d'%(split,len(self.points_datapath)))
 
-    def train_set_percent(self, percentage):
+    def train_set_percent(self, percentage, seed):
         if percentage is None or percentage == 1.0:
             return
 
         percentage = str(percentage)
         # the stratified point clouds are pre-defined on this percentiles_split.json file
-        with open('tools/percentiles_split.json', 'r') as p:
+        if seed == 0:
+            split_path = 'tools/percentiles_split.json'
+        else:
+            split_path = 'tools/semkitti_splits_seed%d.json' % seed
+        with open(split_path, 'r') as p:
             splits = json.load(p)
 
             assert (percentage in splits)

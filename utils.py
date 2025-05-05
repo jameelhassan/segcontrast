@@ -80,7 +80,7 @@ def get_dataset(args, pre_training=True):
     percent_labels = 1.0 if pre_training else args.percentage_labels
     segment_contrast = False if not pre_training else args.segment_contrast
     data_train = data_loaders[args.dataset_name](root=args.data_dir, split='train', percentage=percent_labels, 
-                                                    intensity_channel=args.use_intensity, pre_training=pre_training, resolution=args.sparse_resolution)
+                                                    intensity_channel=args.use_intensity, pre_training=pre_training, resolution=args.sparse_resolution, seed=args.seed)
     data_test = data_loaders[args.dataset_name](root=args.data_dir, split='validation', percentage=percent_labels, 
                                                     intensity_channel=args.use_intensity, pre_training=pre_training, resolution=args.sparse_resolution)
 
